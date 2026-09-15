@@ -23,8 +23,30 @@ Millions of people in low-connectivity areas are unable to access digital financ
 - **Database:** H2
 - **Infrastructure:** Docker, Docker Compose (Kubernetes/Minikube for multi-node orchestration, time permitting)
 
+## How to Run
+
+1. Clone the repository:
+   git clone <git clone https://github.com/bishopttw/offline-pay.git>
+
+2. Navigate into the project folder:
+   cd offlinepay
+
+3. Run the application using Maven:
+   ./mvnw spring-boot:run
+   (On Windows, use: mvnw.cmd spring-boot:run)
+
+4. Once it starts, the app will be available at:
+   http://localhost:8080
+
+5. To access the H2 database console (for viewing stored data):
+   http://localhost:8080/h2-console
+   (Use the JDBC URL and credentials set in application.properties)
+
 ## Project Status
 🚧 In active development —.
 
 ## Author
-*(Bishop)*
+*Name -- Chukwuma Prince.*
+*Phone no -- 09172573966.*
+*Linked -- https://www.linkedin.com/in/prince-chukwuma-728a91381/?lipi=urn%3Ali%3Apage%3Ad_flagship3_feed%3Baxc8xv12Qei%2BwRR35LxJgg%3D%3D*
+*Github -- https://github.com/bishopttw*
