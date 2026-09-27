@@ -46,4 +46,17 @@ public class TransactionService {
         Transaction transaction = new Transaction(senderId, receiverId, amount, ONLINE_FEE, TransactionStatus.CONFIRMED);
         return transactionRepository.save(transaction);
     }
+
+    private static final BigDecimal OFFLINE_FEE = BigDecimal.valueOf(5.00);
+
+    public Transaction transferOffline(Long senderId, Long receiverId, BigDecimal amount) {
+        Account sender = accountRepository.findById(senderId)
+                .orElseThrow(() -> new RuntimeException("Sender account not found"));
+
+        Account receiver = accountRepository.findById(receiverId)
+                .orElseThrow(() -> new RuntimeException("Receiver account not found"));
+
+        Transaction transaction = new Transaction(senderId, receiverId, amount, OFFLINE_FEE, TransactionStatus.PENDING_SYNC);
+        return transactionRepository.save(transaction);
+    }
 }

@@ -25,4 +25,12 @@ public class TransactionController {
             @RequestParam BigDecimal amount) {
         return transactionService.transferOnline(senderId, receiverId, amount);
     }
+
+    @PostMapping("/transfer-offline")
+    public Transaction transferOffline(
+            @RequestParam Long senderId,
+            @RequestParam Long receiverId,
+            @RequestParam BigDecimal amount) {
+        return transactionService.transferOffline(senderId, receiverId, amount);
+    }
 }
