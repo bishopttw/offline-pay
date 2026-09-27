@@ -5,6 +5,7 @@ import com.bishop.offlinepay.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.math.BigDecimal;
 
 @RestController
@@ -32,5 +33,10 @@ public class TransactionController {
             @RequestParam Long receiverId,
             @RequestParam BigDecimal amount) {
         return transactionService.transferOffline(senderId, receiverId, amount);
+    }
+
+    @PostMapping("/sync")
+    public List<Transaction> sync() {
+        return transactionService.syncPendingTransactions();
     }
 }

@@ -8,6 +8,7 @@ import com.bishop.offlinepay.repository.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.math.BigDecimal;
 
 @Service
@@ -58,5 +59,30 @@ public class TransactionService {
 
         Transaction transaction = new Transaction(senderId, receiverId, amount, OFFLINE_FEE, TransactionStatus.PENDING_SYNC);
         return transactionRepository.save(transaction);
+    }
+
+    public List<Transaction> syncPendingTransactions() {
+        List<Transaction> pending = transactionRepository.findByStatus(TransactionStatus.PENDING_SYNC);
+
+        for (Transaction transaction : pending) {
+            Account sender = accountRepository.findById(transaction.getSenderId())
+                    .orElseThrow(() -> new RuntimeException("Sender account not found"));
+
+            Account receiver = accountRepository.findById(transaction.getReceiverId())
+                    .orElseThrow(() -> new RuntimeException("Receiver account not found"));
+
+            BigDecimal totalDeduction = transaction.getAmount().add(transaction.getFee());
+
+            sender.setBalance(sender.getBalance().subtract(totalDeduction));
+            receiver.setBalance(receiver.getBalance().add(transaction.getAmount()));
+
+            accountRepository.save(sender);
+            accountRepository.save(receiver);
+
+            transaction.setStatus(TransactionStatus.CONFIRMED);
+            transactionRepository.save(transaction);
+        }
+
+        return pending;
     }
 }
