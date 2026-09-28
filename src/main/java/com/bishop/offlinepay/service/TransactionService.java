@@ -73,6 +73,12 @@ public class TransactionService {
 
             BigDecimal totalDeduction = transaction.getAmount().add(transaction.getFee());
 
+            if (sender.getBalance().compareTo(totalDeduction) < 0) {
+                transaction.setStatus(TransactionStatus.FAILED);
+                transactionRepository.save(transaction);
+                continue;
+            }
+
             sender.setBalance(sender.getBalance().subtract(totalDeduction));
             receiver.setBalance(receiver.getBalance().add(transaction.getAmount()));
 
