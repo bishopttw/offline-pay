@@ -50,3 +50,5 @@ Millions of people in low-connectivity areas are unable to access digital financ
 *Phone no -- 09172573966.*
 *Linked -- https://www.linkedin.com/in/prince-chukwuma-728a91381/?lipi=urn%3Ali%3Apage%3Ad_flagship3_feed%3Baxc8xv12Qei%2BwRR35LxJgg%3D%3D*
 *Github -- https://github.com/bishopttw*
+
+## Status: MVP complete, Docker + K8s pipeline in progress'
