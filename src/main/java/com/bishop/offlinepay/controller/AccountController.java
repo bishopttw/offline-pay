@@ -1,7 +1,10 @@
 package com.bishop.offlinepay.controller;
 
+import com.bishop.offlinepay.dto.SignupRequest;
 import com.bishop.offlinepay.model.Account;
 import com.bishop.offlinepay.repository.AccountRepository;
+import com.bishop.offlinepay.service.AccountService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,18 +16,17 @@ import java.util.List;
 public class AccountController {
 
     private final AccountRepository accountRepository;
+    private final AccountService accountService;
 
     @Autowired
-    public AccountController(AccountRepository accountRepository) {
+    public AccountController(AccountRepository accountRepository, AccountService accountService) {
         this.accountRepository = accountRepository;
+        this.accountService = accountService;
     }
 
-    @PostMapping
-    public Account createAccount(
-            @RequestParam String name,
-            @RequestParam BigDecimal balance) {
-        Account account = new Account(name, balance);
-        return accountRepository.save(account);
+    @PostMapping("/signup")
+    public Account signup(@Valid @RequestBody SignupRequest request) {
+        return accountService.signup(request);
     }
 
     @GetMapping
