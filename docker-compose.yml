@@ -1,0 +1,16 @@
+services:
+  agent1:
+    build: .
+    container_name: offlinepay-agent1
+    ports:
+      - "8081:8080"
+    volumes:
+      - ./data/agent1:/app/data
+
+  agent2:
+    build: .
+    container_name: offlinepay-agent2
+    ports:
+      - "8082:8080"
+    volumes:
+      - ./data/agent2:/app/data
