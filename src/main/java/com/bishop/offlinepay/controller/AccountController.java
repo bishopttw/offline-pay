@@ -1,7 +1,9 @@
 package com.bishop.offlinepay.controller;
 
+import com.bishop.offlinepay.dto.AccountResponse;
 import com.bishop.offlinepay.dto.SignupRequest;
 import com.bishop.offlinepay.model.Account;
+import com.bishop.offlinepay.dto.LoginRequest;
 import com.bishop.offlinepay.repository.AccountRepository;
 import com.bishop.offlinepay.service.AccountService;
 import jakarta.validation.Valid;
@@ -25,7 +27,7 @@ public class AccountController {
     }
 
     @PostMapping("/signup")
-    public Account signup(@Valid @RequestBody SignupRequest request) {
+    public AccountResponse signup(@Valid @RequestBody SignupRequest request) {
         return accountService.signup(request);
     }
 
@@ -38,5 +40,10 @@ public class AccountController {
     public Account getAccount(@PathVariable Long id) {
         return accountRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Account not found"));
+    }
+
+    @PostMapping("/login")
+    public AccountResponse login(@Valid @RequestBody LoginRequest request) {
+        return accountService.login(request);
     }
 }

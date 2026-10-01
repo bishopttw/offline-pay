@@ -1,12 +1,14 @@
 package com.bishop.offlinepay.service;
 
 import com.bishop.offlinepay.config.PasswordEncoderConfig;
+import com.bishop.offlinepay.dto.AccountResponse;
 import com.bishop.offlinepay.dto.SignupRequest;
 import com.bishop.offlinepay.model.Account;
 import com.bishop.offlinepay.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import com.bishop.offlinepay.dto.LoginRequest;
 
 import java.math.BigDecimal;
 
@@ -22,7 +24,7 @@ public class AccountService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public Account signup(SignupRequest request){
+    public AccountResponse signup(SignupRequest request){
         if (accountRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new RuntimeException("Email is already registered");
         }
@@ -36,7 +38,17 @@ public class AccountService {
                 hashedPassword,
                 BigDecimal.ZERO
         );
+        Account saved = accountRepository.save(account);
+        return new AccountResponse(saved);
+    }
 
-        return accountRepository.save(account);
+    public AccountResponse login(LoginRequest request){
+        Account account = accountRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new RuntimeException("Invalid email or password"));
+
+        if (!passwordEncoder.matches(request.getPassword(), account.getPassword())) {
+            throw new RuntimeException("Invalid email or password");
+        }
+        return new AccountResponse(account);
     }
 }
