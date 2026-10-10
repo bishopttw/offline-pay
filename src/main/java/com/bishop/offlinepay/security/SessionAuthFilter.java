@@ -15,6 +15,9 @@ public class SessionAuthFilter implements Filter{
     private static final List<String> PUBLIC_PATHS = List.of(
             "/accounts/signup",
             "/accounts/login",
+            "/signup",
+            "/login",
+            "/css",
             "/h2-console"
     );
 
