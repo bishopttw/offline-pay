@@ -367,3 +367,37 @@ body {
 .bottom-nav a.active {
     color: var(--primary);
 }
+
+.balance-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.eye-btn {
+    background: none;
+    border: none;
+    color: white;
+    opacity: 0.85;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 0;
+}
+
+.eye-btn:hover {
+    opacity: 1;
+}
+
+.eye.btn .eye-open {
+    display: none;
+}
+
+.eye-btn.revealed .eye-open {
+     display: block;
+}
+
+.eye-btn.revealed .eye-closed {
+     display: none;
+}
+

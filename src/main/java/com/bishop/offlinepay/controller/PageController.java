@@ -107,8 +107,11 @@ public class PageController {
                 .limit(5)
                 .toList();
 
+        String firstName = account.getName().trim().split("\\s+")[0];
+
         model.addAttribute("account", account);
         model.addAttribute("transactions", recent);
+        model.addAttribute("firstName", firstName);
         return "dashboard";
     }
 

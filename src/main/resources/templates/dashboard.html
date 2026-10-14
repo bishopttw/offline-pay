@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>OfflinePay - Dashboard</title>
-    <Link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
    <div class="app-container">
        <div class="top-bar">
            <div>
                <p class="greeting">Welcome back,</p>
-               <h2 th:text="${account.name}">Name</h2>
+               <h2 th:text="'Hi, ' + ${FirstName}">Hi, Name</h2>
            </div>
            <a th:href="@{/logout}" class="logout-link">Log out</a>
        </div>
@@ -22,9 +22,23 @@
        </div>
 
        <div class="balance-card">
-           <p class="balance-label">Available Balance</p>
-           <h1 class="balance-amount"
-               th:text="'₦' + ${#numbers.formatDecimal(account.balance,1 , 'COMMA', 2, 'POINT')}">₦0.00</h1>
+           <div class="balance-top">
+               <p class="balance-label">Available Balance</p>
+               <button type="button" class="eye-btn" id="balance-eye" onclick="toggleBalance()" aria-label="Show or hide balance">
+                   <svg class="eye-open" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                       <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                       <circle cx="12" cy="12" r="3"/>
+                   </svg>
+                   <svg class="eye-closed" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                       <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                       <line x1="1" y1="1" x2="23" y2="23"/>
+                   </svg>
+               </button>
+           </div>
+
+           <h1 class="balance-amount" id="balance-amount"
+               th:data-amount="'₦' + ${#numbers.formatDecimal(account.balance, 1, 'COMMA', 2, 'POINT')}">****</h1>
+
            <p class="balance-owner" th:text="${account.email}">email</p>
        </div>
 
@@ -47,7 +61,7 @@
            No transactions yet.
        </div>
 
-       <div class="tx-list" th:unless="${#lists.isEmpty(transactions}}">
+       <div class="tx-list" th:unless="${#lists.isEmpty(transactions)}">
            <div class="tx-row" th:each="t : ${transactions}">
                <div class="tx-info">
                    <p class="tx-title"
@@ -75,7 +89,7 @@
         function updateStatus() {
             const badge = document.getElementById('status-badge');
             const text = document.getElementById('status-text');
-            if (navigator.online) {
+            if (navigator.onLine) {
                 badge.className = 'status-badge online';
                 text.textContent = 'Online';
             }else {
@@ -86,6 +100,20 @@
         window.addEventListener('online', updateStatus);
         window.addEventListener('offline', updateStatus);
         updateStatus();
+
+        function applyBalance(show) {
+            const amount = document.getElementById('balance-amount');
+            const eye = document.getElementById('balance-eye');
+            amount.textContent = show ? amount.dataset.amount : '****';
+            eye.classList.toggle('revealed', show);
+        }
+
+        function toggleBalance() {
+            const showing = document.getElementById('balance-eye').classList.contains('revealed');
+            localStorage.setItem('balanceVisible', !showing);
+        }
+
+        applyBalance(localStorage.getItem('balanceVisible') === 'true');
     </script>
 
 </body>
