@@ -248,7 +248,7 @@ body {
 }
 
 .action-btn {
-    flex: 1,
+    flex: 1;
     background: var(--card-bg);
     border-radius: 14px;
     padding: 16px;
@@ -389,7 +389,7 @@ body {
     opacity: 1;
 }
 
-.eye.btn .eye-open {
+.eye-btn .eye-open {
     display: none;
 }
 

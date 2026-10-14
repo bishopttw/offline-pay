@@ -11,7 +11,7 @@
        <div class="top-bar">
            <div>
                <p class="greeting">Welcome back,</p>
-               <h2 th:text="'Hi, ' + ${FirstName}">Hi, Name</h2>
+               <h2 th:text="'Hi, ' + ${firstName}">Hi, Name</h2>
            </div>
            <a th:href="@{/logout}" class="logout-link">Log out</a>
        </div>
@@ -38,8 +38,6 @@
 
            <h1 class="balance-amount" id="balance-amount"
                th:data-amount="'₦' + ${#numbers.formatDecimal(account.balance, 1, 'COMMA', 2, 'POINT')}">****</h1>
-
-           <p class="balance-owner" th:text="${account.email}">email</p>
        </div>
 
        <div class="actions">
@@ -111,6 +109,7 @@
         function toggleBalance() {
             const showing = document.getElementById('balance-eye').classList.contains('revealed');
             localStorage.setItem('balanceVisible', !showing);
+            applyBalance(!showing);
         }
 
         applyBalance(localStorage.getItem('balanceVisible') === 'true');
