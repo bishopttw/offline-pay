@@ -36,10 +36,14 @@ public class SessionAuthFilter implements Filter{
         }
 
         HttpSession session = request.getSession(false);
-        if(session == null || session.getAttribute("accountId") ==  null){
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.setContentType("application/json");
-            response.getWriter().write("{\"error\": \"You must be logged in\"}");
+        if (session == null || session.getAttribute("accountId") == null) {
+            if (path.startsWith("/accounts") || path.startsWith("/transactions")) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.setContentType("application/json");
+                response.getWriter().write("{\"error\": \"You must be logged in\"}");
+            } else {
+                response.sendRedirect("/login");
+            }
             return;
         }
 

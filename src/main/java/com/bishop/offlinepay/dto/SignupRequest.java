@@ -5,7 +5,8 @@ import jakarta.validation.constraints.*;
 
 public class SignupRequest {
     @NotBlank(message = "Name is required")
-    @Pattern(regexp = "^[a-zA-Z\\s]+$", message = "Name must contain only letters")
+    @Size(min = 6, max = 50, message = "Name must be between 6 and 50 characters")
+    @Pattern(regexp = "^[a-zA-Z'-]+(\\s[a-zA-Z'-]+)+$", message = "Enter your full name (first and last name, letters only)")
     private String name;
 
     @NotBlank(message = "Email is required")
