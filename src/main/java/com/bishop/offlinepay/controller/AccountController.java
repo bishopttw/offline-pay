@@ -35,17 +35,10 @@ public class AccountController {
         return accountService.signup(request);
     }
 
-    @GetMapping
-    public List<AccountResponse> getAllAccounts() {
-        return accountRepository.findAll()
-                .stream()
-                .map(AccountResponse::new)
-                .toList();
-    }
-
-    @GetMapping("/{id}")
-    public AccountResponse getAccount(@PathVariable Long id) {
-        Account account = accountRepository.findById(id)
+    @GetMapping("/me")
+    public AccountResponse me(HttpSession session) {
+        Long accountId = (Long) session.getAttribute("accountId");
+        Account account = accountRepository.findById(accountId)
                 .orElseThrow(() -> new RuntimeException("Account not found"));
         return new AccountResponse(account);
     }

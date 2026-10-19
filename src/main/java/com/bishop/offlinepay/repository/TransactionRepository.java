@@ -8,4 +8,5 @@ import java.util.List;
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
     List<Transaction> findByStatus(TransactionStatus status);
     List<Transaction> findBySenderIdOrReceiverIdOrderByTimestampDesc(Long senderId, Long receiverId);
+    List<Transaction> findByStatusAndSenderId(TransactionStatus status, Long senderId);
 }

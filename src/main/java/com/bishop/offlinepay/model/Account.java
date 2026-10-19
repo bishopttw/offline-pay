@@ -23,6 +23,9 @@ public class Account {
 
     private BigDecimal balance;
 
+    @Version
+    private Long version;
+
     //No- argument constructor - required by JPA internally
     public Account(){}
 

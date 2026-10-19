@@ -2,6 +2,7 @@ package com.bishop.offlinepay.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -26,5 +27,12 @@ public class GlobalExceptionHandler {
                 errors.put(fieldError.getField(), fieldError.getDefaultMessage())
         );
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
+    }
+
+    @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
+    public ResponseEntity<Map<String, String>> handleConflict(ObjectOptimisticLockingFailureException ex) {
+        Map<String, String> error = new HashMap<>();
+        error.put("error", "Your account was changed by another request. Please try again.");
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     }
 }

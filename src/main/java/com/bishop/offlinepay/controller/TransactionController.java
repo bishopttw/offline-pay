@@ -2,6 +2,7 @@ package com.bishop.offlinepay.controller;
 
 import com.bishop.offlinepay.model.Transaction;
 import com.bishop.offlinepay.service.TransactionService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,22 +22,25 @@ public class TransactionController {
 
     @PostMapping("/transfer")
     public Transaction transferOnline(
-            @RequestParam Long senderId,
             @RequestParam Long receiverId,
-            @RequestParam BigDecimal amount) {
+            @RequestParam BigDecimal amount,
+            HttpSession session) {
+        Long senderId = (Long) session.getAttribute("accountId");
         return transactionService.transferOnline(senderId, receiverId, amount);
     }
 
     @PostMapping("/transfer-offline")
     public Transaction transferOffline(
-            @RequestParam Long senderId,
             @RequestParam Long receiverId,
-            @RequestParam BigDecimal amount) {
+            @RequestParam BigDecimal amount,
+            HttpSession session) {
+        Long senderId = (Long) session.getAttribute("accountId");
         return transactionService.transferOffline(senderId, receiverId, amount);
     }
 
     @PostMapping("/sync")
-    public List<Transaction> sync() {
-        return transactionService.syncPendingTransactions();
+    public List<Transaction> sync(HttpSession session) {
+        Long accountId = (Long) session.getAttribute("accountId");
+        return transactionService.syncPendingTransactions(accountId);
     }
 }
