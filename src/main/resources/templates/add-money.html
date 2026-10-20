@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>OfflinePay - Add Money</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-card">
+            <h1>Add Money</h1>
+            <p class="subtitle">Fund your wallet (test mode, no real money)</p>
+
+            <div class="error-message" th:if="${error}" th:text="${error}"></div>
+
+            <form th:action="@{/add-money}" method="post">
+                <div class="form-group">
+                    <label>Amount (₦)</label>
+                    <input type="number" name="amount" min="100" max="500000" step="0.01" required>
+                </div>
+                <button type="submit" class="btn-primary">Continue to payment</button>
+            </form>
+
+            <p class="auth-switch"><a th:href="@{/dashboard}">Back to dashboard</a></p>
+        </div>
+    </div>
+
+</body>
+</html>
