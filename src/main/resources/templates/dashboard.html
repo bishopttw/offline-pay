@@ -40,6 +40,9 @@
                th:data-amount="'₦' + ${#numbers.formatDecimal(account.balance, 1, 'COMMA', 2, 'POINT')}">****</h1>
        </div>
 
+       <div class="alert alert-success" th:if="${payMessage}" th:text="${payMessage}"></div>
+       <div class="alert alert-error" th:if="${payError}" th:text="${payError}"></div>
+
        <div class="actions">
            <a th:href="@{/send}" class="action-btn">
                <span class="action-icon">↗</span>

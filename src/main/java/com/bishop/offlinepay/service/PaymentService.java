@@ -5,6 +5,7 @@ import com.bishop.offlinepay.model.DepositStatus;
 import com.bishop.offlinepay.repository.AccountRepository;
 import com.bishop.offlinepay.model.Account;
 import com.bishop.offlinepay.repository.DepositRepository;
+import org.aspectj.bridge.Message;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
@@ -13,11 +14,18 @@ import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
 
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
+import java.security.GeneralSecurityException;
 import java.util.UUID;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+import java.security.MessageDigest;
+import java.util.HexFormat;
 
 @Service
 public class PaymentService {
@@ -114,6 +122,48 @@ public class PaymentService {
         }
         String link = (String) url;
         return link.startsWith("https://checkout.paystack.com/") ? link : null;
+    }
+
+    // A small box to carry the 3 things we need from Paystack's answer
+    public record VerifiedPayment(String status, long amountKobo, String currency) {}
+
+    public VerifiedPayment verify(String reference) {
+        try {
+            Map<?, ?> body = restClient.get()
+                    .uri("/transaction/verify/{reference}", reference)
+                    .retrieve()
+                    .body(Map.class);
+
+            if (body == null || !(body.get("data") instanceof Map<?, ?> data)) {
+                return null;
+            }
+            if (!(data.get("amount") instanceof Number amount)) {
+                return null;
+            }
+            String status = String.valueOf(data.get("status"));
+            String currency = String.valueOf(data.get("currency"));
+            return new VerifiedPayment(status, amount.longValue(), currency);
+        } catch (RestClientException ex) {
+            log.error("Paystack verify failed: {}", ex.getMessage());
+            return null;
+        }
+    }
+
+    public boolean isValidSignature(String rawBody, String signature) {
+        if (signature == null || secretKey == null || secretKey.isBlank()) {
+            return false;
+        }
+        try {
+            Mac mac = Mac.getInstance("HmacSHA512");
+            mac.init(new SecretKeySpec(secretKey.getBytes(StandardCharsets.UTF_8), "HmacSHA512"));
+            String expected = HexFormat.of().formatHex(mac.doFinal(rawBody.getBytes(StandardCharsets.UTF_8)));
+            return MessageDigest.isEqual(
+                    expected.getBytes(StandardCharsets.UTF_8),
+                    signature.toLowerCase().getBytes(StandardCharsets.UTF_8)
+            );
+        } catch (GeneralSecurityException ex) {
+            return false;
+        }
     }
 
 }

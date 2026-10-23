@@ -18,7 +18,8 @@ public class SessionAuthFilter implements Filter{
             "/signup",
             "/login",
             "/css",
-            "/h2-console"
+            "/h2-console",
+            "/payments/webhook"
     );
 
     @Override
