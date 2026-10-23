@@ -12,6 +12,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http){
         http
                 .csrf(csrf -> csrf.disable())
+                .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/accounts/signup", "/accounts/login").permitAll()
                         .anyRequest().permitAll()

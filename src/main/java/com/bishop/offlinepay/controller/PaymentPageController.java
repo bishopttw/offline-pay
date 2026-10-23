@@ -35,7 +35,11 @@ public class PaymentPageController {
         try {
             PaymentService.VerifiedPayment payment = paymentService.verify(reference);
 
-            if (payment != null && "success".equals(payment.status())) {
+            if (payment == null) {
+                // we could not reach Paystack or got an error: don't touch the deposit
+                redirect.addFlashAttribute("payError",
+                        "We could not confirm your payment right now. If you paid, it will be added shortly.");
+            } else if ("success".equals(payment.status())) {
                 DepositStatus result = depositService.creditDeposit(
                         reference, payment.amountKobo(), payment.currency()
                 );
@@ -46,7 +50,7 @@ public class PaymentPageController {
                 }
             } else {
                 depositService.markFailed(reference);
-                redirect.addFlashAttribute("payError", "Payment was not completed. No money was taken.");
+                redirect.addFlashAttribute("payError", "Payment was not completed. Nothing was added to your wallet.");
             }
         } catch (RuntimeException ex) {
             redirect.addFlashAttribute("payError", "Something went wrong confirming your payment.");

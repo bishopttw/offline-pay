@@ -5,7 +5,6 @@ import com.bishop.offlinepay.model.DepositStatus;
 import com.bishop.offlinepay.repository.AccountRepository;
 import com.bishop.offlinepay.model.Account;
 import com.bishop.offlinepay.repository.DepositRepository;
-import org.aspectj.bridge.Message;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
@@ -51,7 +50,6 @@ public class PaymentService {
         this.secretKey = secretKey;
         this.appBaseUrl = appBaseUrl;
         this.restClient = RestClient.builder().baseUrl(paystackBaseUrl).build();
-        log.info("Paystack key loaded: {}", secretKey != null && !secretKey.isBlank());
     }
 
     public String initialize(Long accountId, BigDecimal amount) {
@@ -131,6 +129,7 @@ public class PaymentService {
         try {
             Map<?, ?> body = restClient.get()
                     .uri("/transaction/verify/{reference}", reference)
+                    .header("Authorization", "Bearer " + secretKey)
                     .retrieve()
                     .body(Map.class);
 
