@@ -82,6 +82,7 @@ public class PageController {
             AccountResponse response = accountService.login(request);
 
             HttpSession session = httpRequest.getSession(true);
+            httpRequest.changeSessionId();
             session.setAttribute("accountId", response.getId());
 
             return "redirect:/dashboard";

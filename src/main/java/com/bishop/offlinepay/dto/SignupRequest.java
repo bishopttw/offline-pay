@@ -21,6 +21,10 @@ public class SignupRequest {
     @Pattern(regexp = "^(?=.*[A-Z])(?=.*[0-9]).+$", message = "Password must contain at least one uppercase letter and one number")
     private String password;
 
+    @NotBlank(message = "Pin is required")
+    @Pattern(regexp = "^\\d{4}$", message = "Pin must be exactly 4 digits")
+    private String pin;
+
     public String getName() {
         return name;
     }
@@ -51,5 +55,13 @@ public class SignupRequest {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getPin() {
+        return pin;
+    }
+
+    public void setPin(String pin) {
+        this.pin = pin;
     }
 }

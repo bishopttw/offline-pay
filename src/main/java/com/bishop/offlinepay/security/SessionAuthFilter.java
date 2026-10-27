@@ -19,7 +19,13 @@ public class SessionAuthFilter implements Filter{
             "/login",
             "/css",
             "/h2-console",
-            "/payments/webhook"
+            "/payments/webhook",
+            "/sw.js",
+            "/manifest.json",
+            "/offline.html",
+            "/icons",
+            "/js",
+            "/error"
     );
 
     @Override

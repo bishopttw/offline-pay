@@ -2,6 +2,8 @@ package com.bishop.offlinepay.model;
 
 import jakarta.persistence.*;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
 
 @Entity
 @Table(name = "accounts")
@@ -21,7 +23,12 @@ public class Account {
 
     private String password;
 
+    @Column(precision = 19, scale = 2)
     private BigDecimal balance;
+
+    private Integer failedAttempts = 0;
+    private LocalDateTime lockUntil;
+    private String pinHash;
 
     @Version
     private Long version;
@@ -84,5 +91,29 @@ public class Account {
 
     public void setBalance(BigDecimal balance) {
         this.balance = balance;
+    }
+
+    public Integer getFailedAttempts() {
+        return failedAttempts;
+    }
+
+    public void setFailedAttempts(Integer failedAttempts) {
+        this.failedAttempts = failedAttempts;
+    }
+
+    public LocalDateTime getLockUntil() {
+        return lockUntil;
+    }
+
+    public void setLockUntil(LocalDateTime lockUntil) {
+        this.lockUntil = lockUntil;
+    }
+
+    public String getPinHash() {
+        return pinHash;
+    }
+
+    public void setPinHash(String pinHash) {
+        this.pinHash = pinHash;
     }
 }
