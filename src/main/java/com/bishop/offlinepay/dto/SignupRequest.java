@@ -25,6 +25,10 @@ public class SignupRequest {
     @Pattern(regexp = "^\\d{4}$", message = "Pin must be exactly 4 digits")
     private String pin;
 
+    @NotBlank(message = "Phone number is required")
+    @Pattern(regexp = "^0[789][01]\\d{8}$", message = "Enter a valid Nigerian phone number, like 08012345678")
+    private String phone;
+
     public String getName() {
         return name;
     }
@@ -63,5 +67,13 @@ public class SignupRequest {
 
     public void setPin(String pin) {
         this.pin = pin;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 }

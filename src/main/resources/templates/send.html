@@ -13,7 +13,6 @@
     <script th:src="@{/js/send.js}" defer></script>
 </head>
 <body th:attr="data-account-id=${accountId},data-online-fee=${onlineFee},data-offline-fee=${offlineFee}">
-
 <main class="op-page">
 
     <div class="op-card">
@@ -31,19 +30,20 @@
         <button type="button" class="op-tab" id="tabBank">To other banks</button>
     </div>
 
-    <div id="message" class="alert" hidden></div>
-
     <form id="sendForm" class="op-card" novalidate>
         <div class="op-field">
-            <label for="receiverEmail">Receiver's email</label>
-            <input type="email" id="receiverEmail" autocomplete="off" placeholder="friend@email.com">
+            <label for="receiverAccount">Account number</label>
+            <input type="text" id="receiverAccount" inputmode="numeric" maxlength="10"
+                   autocomplete="off" placeholder="10-digit account number">
             <small id="nameLine" class="op-hint"></small>
         </div>
+
         <div class="op-field">
             <label for="amount">Amount (₦)</label>
-            <input type="text" id="amount" inputmode="decimal" placeholder="0.00">
+            <input type="text" id="amount" inputmode="decimal" autocomplete="off" placeholder="0.00">
             <small id="feeLine" class="op-hint"></small>
         </div>
+
         <div class="op-field" id="pinRow">
             <label for="pin">Transaction PIN</label>
             <div class="password-wrapper">
@@ -60,14 +60,17 @@
                 </button>
             </div>
         </div>
+
         <p id="modeNote" class="op-hint"></p>
+        <p id="status" role="status" style="display:none"></p>
         <button type="submit" class="op-btn">Send</button>
     </form>
 
-    <div class="op-card" id="queueCard" hidden>
+    <div class="op-card" id="queueCard" style="display:none">
         <strong>Waiting to send</strong>
         <ul id="queueList" class="op-queue"></ul>
-        <div id="flushBox" hidden>
+
+        <div id="flushBox" style="display:none">
             <div class="op-field">
                 <label for="flushPin">You're back online. Enter your PIN to send them</label>
                 <div class="password-wrapper">
@@ -83,10 +86,12 @@
                         </svg>
                     </button>
                 </div>
-                <button type="button" id="flushBtn" class="op-btn">Send waiting transfers</button>
             </div>
+            <p id="flushStatus" role="status" style="display:none"></p>
+            <button type="button" id="flushBtn" class="op-btn">Send waiting transfers</button>
         </div>
     </div>
+
 </main>
 
 <nav class="bottom-nav">
@@ -95,7 +100,7 @@
     <a th:href="@{/history}">History</a>
 </nav>
 
-<div id="bankModal" class="modal" hidden>
+<div id="bankModal" class="modal" style="display:none">
     <div class="modal-box">
         <h3>Bank transfers: coming soon</h3>
         <p>Our money is still learning the way to other banks. For now, sending to another OfflinePay user works, even without internet.</p>
@@ -111,6 +116,5 @@
         button.classList.toggle('visible', !isShowing);
     }
 </script>
-
 </body>
 </html>

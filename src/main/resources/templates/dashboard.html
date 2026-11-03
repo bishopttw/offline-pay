@@ -42,6 +42,12 @@
 
            <h1 class="balance-amount" id="balance-amount"
                th:data-amount="'₦' + ${#numbers.formatDecimal(account.balance, 1, 'COMMA', 2, 'POINT')}">****</h1>
+
+           <p class="account-line">
+               <span>OfflinePay</span>
+               <span id="account-number" th:text="${account.accountNumber}">0000000000</span>
+               <button type="button" class="copy-btn" onclick="copyAccountNumber(this)">Copy</button>
+           </p>
        </div>
 
        <div class="alert alert-success" th:if="${payMessage}" th:text="${payMessage}"></div>
@@ -96,6 +102,14 @@
 
    <script th:src="@{/js/net.js}"></script>
     <script>
+
+        function copyAccountNumber(button) {
+           const number = document.getElementById('account-number').textContent.trim();
+           navigator.clipboard.writeText(number).then(function () {
+               button.textContent = 'Copied';
+           setTimeout(function () { button.textContent = 'Copy'; }, 1500);
+        });
+}
         function updateStatus() {
             const badge = document.getElementById('status-badge');
             const text = document.getElementById('status-text');

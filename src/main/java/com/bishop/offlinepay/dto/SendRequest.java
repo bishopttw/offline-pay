@@ -5,9 +5,10 @@ import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
 
 public class SendRequest {
-    @NotBlank(message = "Receiver email is required")
-    @Email(message = "Enter a valid email")
-    private String receiverEmail;
+
+    @NotBlank(message = "Account number is required")
+    @Pattern(regexp = "^\\d{10}$", message = "Account number must be 10 digits")
+    private String receiverAccount;
 
     @NotNull(message = "Amount is required")
     private BigDecimal amount;
@@ -20,35 +21,12 @@ public class SendRequest {
     @Pattern(regexp = "^[A-Za-z0-9-]*$", message = "Bad reference")
     private String clientRef;
 
-    public String getReceiverEmail() {
-        return receiverEmail;
-    }
-
-    public void setReceiverEmail(String receiverEmail) {
-        this.receiverEmail = receiverEmail;
-    }
-
-    public BigDecimal getAmount() {
-        return amount;
-    }
-
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
-    }
-
-    public String getPin() {
-        return pin;
-    }
-
-    public void setPin(String pin) {
-        this.pin = pin;
-    }
-
-    public String getClientRef() {
-        return clientRef;
-    }
-
-    public void setClientRef(String clientRef) {
-        this.clientRef = clientRef;
-    }
+    public String getReceiverAccount() { return receiverAccount; }
+    public void setReceiverAccount(String receiverAccount) { this.receiverAccount = receiverAccount; }
+    public BigDecimal getAmount() { return amount; }
+    public void setAmount(BigDecimal amount) { this.amount = amount; }
+    public String getPin() { return pin; }
+    public void setPin(String pin) { this.pin = pin; }
+    public String getClientRef() { return clientRef; }
+    public void setClientRef(String clientRef) { this.clientRef = clientRef; }
 }

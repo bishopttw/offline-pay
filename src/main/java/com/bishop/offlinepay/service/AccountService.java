@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.bishop.offlinepay.dto.LoginRequest;
 
 import java.math.BigDecimal;
+import java.security.SecureRandom;
 import java.time.LocalDateTime;
 
 @Service
@@ -24,6 +25,7 @@ public class AccountService {
         return pin.chars().distinct().count() == 1
                 || pin.equals("1234") || pin.equals("4321");
     }
+    private static final SecureRandom RANDOM = new SecureRandom();
 
     @Autowired
     public AccountService(AccountRepository accountRepository, PasswordEncoder passwordEncoder) {
@@ -31,11 +33,15 @@ public class AccountService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public AccountResponse signup(SignupRequest request){
+    public AccountResponse signup(SignupRequest request) {
         String email = request.getEmail().trim().toLowerCase();
+        String phone = request.getPhone().trim();
 
         if (accountRepository.findByEmail(email).isPresent()) {
             throw new RuntimeException("Email is already registered");
+        }
+        if (accountRepository.existsByPhone(phone)) {
+            throw new RuntimeException("Phone number is already registered");
         }
         if (isWeakPin(request.getPin())) {
             throw new RuntimeException("Choose a less obvious PIN.");
@@ -51,6 +57,8 @@ public class AccountService {
                 BigDecimal.ZERO
         );
         account.setPinHash(passwordEncoder.encode(request.getPin()));
+        account.setPhone(phone);
+        account.setAccountNumber(generateAccountNumber());
 
         Account saved = accountRepository.save(account);
         return new AccountResponse(saved);
@@ -118,5 +126,15 @@ public class AccountService {
                     + " attempt(s) left before your account is locked.");
         }
         resetFailures(account);
+    }
+
+    private String generateAccountNumber() {
+        for (int attempt = 0; attempt < 20; attempt++) {
+            String candidate = String.valueOf(RANDOM.nextLong(1_000_000_000L, 10_000_000_000L));
+            if (!accountRepository.existsByAccountNumber(candidate)) {
+                return candidate;
+            }
+        }
+        throw new RuntimeException("Could not generate an account number. Please try again.");
     }
 }

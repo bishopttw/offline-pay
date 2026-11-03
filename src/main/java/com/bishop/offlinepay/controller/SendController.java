@@ -27,18 +27,31 @@ public class SendController {
     }
 
     @GetMapping("/lookup")
-    public ResponseEntity<Map<String, String>> lookup(@RequestParam String email, HttpSession session) {
-        String name = sendService.lookupName(currentId(session), email);
+    public ResponseEntity<Map<String, String>> lookup(@RequestParam("account") String account,
+                                                      HttpSession session) {
+        String name = sendService.lookupName(currentId(session), account);
         if (name == null) {
             return ResponseEntity.status(404)
-                    .body(Map.of("error", "No OfflinePay account with that email."));
+                    .body(Map.of("error", "No OfflinePay account with that account number."));
         }
-        return ResponseEntity.ok(Map.of("name", name));
+        return ResponseEntity.ok(Map.of("name", name, "bank", "OfflinePay"));
     }
 
     @PostMapping("/send")
     public Map<String, Object> send(@Valid @RequestBody SendRequest request, HttpSession session){
         Transaction tx = sendService.sendOnline(currentId(session), request);
+        return Map.of("status", tx.getStatus().name(), "fee", tx.getFee());
+    }
+
+    @PostMapping("/queue")
+    public Map<String, Object> queue(@Valid @RequestBody SendRequest request, HttpSession session) {
+        Transaction tx = sendService.queueOffline(currentId(session), request);
+        return Map.of("status", tx.getStatus().name(), "fee", tx.getFee());
+    }
+
+    @PostMapping("/sms-send")
+    public Map<String, Object> smsSend(@Valid @RequestBody SendRequest request, HttpSession session) {
+        Transaction tx = sendService.sendViaSms(currentId(session), request);
         return Map.of("status", tx.getStatus().name(), "fee", tx.getFee());
     }
 

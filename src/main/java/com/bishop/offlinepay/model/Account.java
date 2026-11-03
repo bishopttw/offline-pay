@@ -33,6 +33,12 @@ public class Account {
     @Version
     private Long version;
 
+    @Column(unique = true, length = 10)
+    private String accountNumber;
+
+    @Column(unique = true, length = 11)
+    private String phone;
+
     //No- argument constructor - required by JPA internally
     public Account(){}
 
@@ -116,4 +122,10 @@ public class Account {
     public void setPinHash(String pinHash) {
         this.pinHash = pinHash;
     }
+
+    public String getAccountNumber() { return accountNumber; }
+    public void setAccountNumber(String accountNumber) { this.accountNumber = accountNumber; }
+
+    public String getPhone() { return phone; }
+    public void setPhone(String phone) { this.phone = phone; }
 }

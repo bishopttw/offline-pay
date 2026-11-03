@@ -33,9 +33,9 @@ public class SendService {
         this.transactionRepository = transactionRepository;
     }
 
-    public String lookupName(Long senderId, String email) {
-        Account receiver = accountRepository.findByEmail(email.trim().toLowerCase()).orElse(null);
-        if (receiver == null || receiver.getId().equals(senderId)){
+    public String lookupName(Long senderId, String accountNumber) {
+        Account receiver = accountRepository.findByAccountNumber(accountNumber.trim()).orElse(null);
+        if (receiver == null || receiver.getId().equals(senderId)) {
             return null;
         }
         return maskName(receiver.getName());
@@ -47,10 +47,42 @@ public class SendService {
             return existing;
         }
         accountService.verifyPin(senderId, request.getPin());
-        Account receiver = findReceiver(senderId, request.getReceiverEmail());
+        Account receiver = findReceiver(senderId, request.getReceiverAccount());
         Transaction tx = transactionService.transferOnline(
                 senderId, receiver.getId(), request.getAmount());
         return  remember(tx, request.getClientRef());
+    }
+
+    public Transaction queueOffline(Long senderId, SendRequest request) {
+        Transaction existing = findExisting(senderId, request.getClientRef());
+        if (existing != null) {
+            return existing;
+        }
+        accountService.verifyPin(senderId, request.getPin());
+        Account receiver = findReceiver(senderId, request.getReceiverAccount());
+        Transaction tx = transactionService.transferOffline(
+                senderId, receiver.getId(), request.getAmount());
+        return remember(tx, request.getClientRef());
+    }
+
+    public Transaction sendViaSms(Long senderId, SendRequest request) {
+        Transaction existing = findExisting(senderId, request.getClientRef());
+        if (existing != null) {
+            return existing;
+        }
+        accountService.verifyPin(senderId, request.getPin());
+        Account receiver = findReceiver(senderId, request.getReceiverAccount());
+        Transaction queued = transactionService.transferOffline(
+                senderId, receiver.getId(), request.getAmount());
+        remember(queued, request.getClientRef());
+
+        transactionService.syncPendingTransactions(senderId);
+
+        Transaction result = transactionRepository.findById(queued.getId()).orElse(queued);
+        if (result.getStatus() == TransactionStatus.FAILED) {
+            throw new RuntimeException("The transfer failed: not enough balance for the amount and the fee.");
+        }
+        return result;
     }
 
     public List<HistoryItem> history(Long accountId) {
@@ -83,9 +115,9 @@ public class SendService {
         return transactionRepository.findByClientRefAndSenderId(clientRef, senderId).orElse(null);
     }
 
-    private Account findReceiver(Long senderId, String email) {
-        Account receiver = accountRepository.findByEmail(email.trim().toLowerCase())
-                .orElseThrow(() -> new RuntimeException("No OfflinePay account with that email."));
+    private Account findReceiver(Long senderId, String accountNumber) {
+        Account receiver = accountRepository.findByAccountNumber(accountNumber.trim())
+                .orElseThrow(() -> new RuntimeException("No OfflinePay account with that account number."));
         if (receiver.getId().equals(senderId)) {
             throw new RuntimeException("You cannot send money to yourself.");
         }
