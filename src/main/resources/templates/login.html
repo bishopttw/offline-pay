@@ -2,14 +2,31 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <title>OfflinePay -Login</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#5B21B6">
     <link rel="apple-touch-icon" href="/icons/icon-192.png">
     <script th:src="@{/js/pwa.js}" defer></script>
+    <script th:src="@{/js/theme.js}"></script>
 </head>
 <body>
+<div class="auth-layout">
+    <aside class="auth-intro">
+        <h1>OfflinePay</h1>
+        <p>Send money even when the internet is gone.</p>
+        <ul class="auth-points">
+            <li><strong>Works offline.</strong>Send through the SMS channel, or save the transfer and let it sync when you are back online.</li>
+            <li><strong>Safe by design.</strong>Strong passwords, a transaction PIN, and a lock after 5 wrong tries.</li>
+            <li><strong>Top up with Paystack.</strong>Add money with your card.</li>
+        </ul>
+    </aside>
+    <div class="auth-panel">
+
    <div class="auth-container">
        <div class="auth-card">
            <h1>OfflinePay</h1>
@@ -45,6 +62,8 @@
            <p class="auth-switch">New here? <a th:href="@{/signup}">Sign up</a></p>
        </div>
    </div>
+    </div>
+</div>
 
    <script>
        function togglePassword(button) {

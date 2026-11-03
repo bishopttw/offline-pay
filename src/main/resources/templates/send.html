@@ -2,7 +2,10 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <title>Send money - OfflinePay</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="manifest" href="/manifest.json">
@@ -11,6 +14,7 @@
     <script th:src="@{/js/pwa.js}" defer></script>
     <script th:src="@{/js/net.js}" defer></script>
     <script th:src="@{/js/send.js}" defer></script>
+    <script th:src="@{/js/theme.js}"></script>
 </head>
 <body th:attr="data-account-id=${accountId},data-online-fee=${onlineFee},data-offline-fee=${offlineFee}">
 <main class="op-page">

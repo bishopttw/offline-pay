@@ -1,4 +1,4 @@
-const CACHE = 'offlinepay-v5';
+const CACHE = 'offlinepay-v6';
 const SHELL = ['/offline.html', '/css/style.css', '/manifest.json',
                '/icons/icon-192.png', '/icons/icon-512.png', '/js/pwa.js', '/js/net.js',
                '/js/send.js', '/js/history.js'];
