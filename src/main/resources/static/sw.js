@@ -1,6 +1,7 @@
-const CACHE = 'offlinepay-v2';
+const CACHE = 'offlinepay-v3';
 const SHELL = ['/offline.html', '/css/style.css', '/manifest.json',
-               '/icons/icon-192.png', '/icons/icon-512.png', '/js/pwa.js'];
+               '/icons/icon-192.png', '/icons/icon-512.png', '/js/pwa.js', '/js/net.js',
+               '/js/send.js', '/js/history.js'];
 const PAGES = ['/dashboard', '/send', '/history'];
 
 function shouldSave(path) {

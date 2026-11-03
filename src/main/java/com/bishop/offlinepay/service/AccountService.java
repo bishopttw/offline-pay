@@ -32,29 +32,34 @@ public class AccountService {
     }
 
     public AccountResponse signup(SignupRequest request){
-        if (accountRepository.findByEmail(request.getEmail().trim().toLowerCase()).isPresent()) {
+        String email = request.getEmail().trim().toLowerCase();
+
+        if (accountRepository.findByEmail(email).isPresent()) {
             throw new RuntimeException("Email is already registered");
+        }
+        if (isWeakPin(request.getPin())) {
+            throw new RuntimeException("Choose a less obvious PIN.");
         }
 
         String hashedPassword = passwordEncoder.encode(request.getPassword());
 
         Account account = new Account(
                 request.getName(),
-                request.getEmail(),
+                email,
                 request.getGender(),
                 hashedPassword,
                 BigDecimal.ZERO
         );
-        if (isWeakPin(request.getPin())) {
-            throw new RuntimeException("Choose a less obvious PIN.");
-        }
-        Account saved = accountRepository.save(account);
         account.setPinHash(passwordEncoder.encode(request.getPin()));
+
+        Account saved = accountRepository.save(account);
         return new AccountResponse(saved);
     }
 
     public AccountResponse login(LoginRequest request){
-        Account account = accountRepository.findByEmail(request.getEmail().trim().toLowerCase())
+        String email = request.getEmail().trim().toLowerCase();
+
+        Account account = accountRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("DENIED"));
 
         if (isLocked(account)) {
@@ -63,7 +68,7 @@ public class AccountService {
 
         if (!passwordEncoder.matches(request.getPassword(), account.getPassword())) {
             registerFailure(account);
-            throw new RuntimeException("DENIED");
+            throw new RuntimeException(DENIED);
         }
 
         resetFailures(account);
@@ -102,8 +107,15 @@ public class AccountService {
         }
         if (pin == null || account.getPinHash() == null
                 || !passwordEncoder.matches(pin, account.getPinHash())) {
+            int used = (account.getFailedAttempts() == null ? 0 : account.getFailedAttempts()) + 1;
             registerFailure(account);
-            throw new RuntimeException("Wrong PIN.");
+            int left = MAX_ATTEMPTS - used;
+            if (left <= 0) {
+                throw new RuntimeException("Too many wrong PINs. Your account is locked for "
+                        + LOCK_MINUTES + " minutes.");
+            }
+            throw new RuntimeException("Wrong PIN. " + left
+                    + " attempt(s) left before your account is locked.");
         }
         resetFailures(account);
     }

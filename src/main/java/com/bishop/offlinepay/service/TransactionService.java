@@ -15,8 +15,8 @@ import java.util.List;
 @Service
 public class TransactionService {
 
-    private static final BigDecimal ONLINE_FEE = new BigDecimal("1.00");
-    private static final BigDecimal OFFLINE_FEE = new BigDecimal("5.00");
+    public static final BigDecimal ONLINE_FEE = new BigDecimal("1.00");
+    public static final BigDecimal OFFLINE_FEE = new BigDecimal("5.00");
     private static final BigDecimal MAX_AMOUNT = new BigDecimal("1000000");
 
     private final AccountRepository accountRepository;

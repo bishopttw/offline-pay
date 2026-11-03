@@ -8,6 +8,8 @@ import com.bishop.offlinepay.model.Transaction;
 import com.bishop.offlinepay.repository.AccountRepository;
 import com.bishop.offlinepay.repository.TransactionRepository;
 import com.bishop.offlinepay.service.AccountService;
+import com.bishop.offlinepay.service.SendService;
+import com.bishop.offlinepay.service.TransactionService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,12 +30,15 @@ public class PageController {
     private final AccountService accountService;
     private final AccountRepository accountRepository;
     private final TransactionRepository transactionRepository;
+    private final SendService sendService;
 
     @Autowired
-    public PageController(AccountService accountService, AccountRepository accountRepository, TransactionRepository transactionRepository){
+    public PageController(AccountService accountService, AccountRepository accountRepository,
+                          TransactionRepository transactionRepository, SendService sendService){
         this.accountService = accountService;
         this.accountRepository = accountRepository;
         this.transactionRepository = transactionRepository;
+        this.sendService = sendService;
     }
 
     @GetMapping("/signup")
@@ -111,9 +116,25 @@ public class PageController {
         String firstName = account.getName().trim().split("\\s+")[0];
 
         model.addAttribute("account", account);
-        model.addAttribute("transactions", recent);
+        model.addAttribute("items", sendService.history(accountId).stream().limit(5).toList());
         model.addAttribute("firstName", firstName);
         return "dashboard";
+    }
+
+    @GetMapping("/send")
+    public String showSend(HttpSession session, Model model){
+        model.addAttribute("accountId", session.getAttribute("accountId"));
+        model.addAttribute("onlineFee", TransactionService.ONLINE_FEE);
+        model.addAttribute("offlineFee", TransactionService.OFFLINE_FEE);
+        return "send";
+    }
+
+    @GetMapping("/history")
+    public String showHistory(HttpSession session, Model model){
+        Long accountId = (Long) session.getAttribute("accountId");
+        model.addAttribute("items", sendService.history(accountId));
+        model.addAttribute("pendingCount", sendService.pendingCount(accountId));
+        return "history";
     }
 
     @GetMapping("/logout")

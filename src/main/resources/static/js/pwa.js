@@ -14,7 +14,7 @@ if (!navigator.online) {
 
 //3. ON THE LOGIN PAGE (AFTER LOGOUT OR TIMEOUT), FORGET THE SAVED PRIVATE PAGES
 if (location.pathname === '/login' && 'caches' in window) {
-   caches.open('offlinepay-v1').then(function (cache) {
+   caches.open('offlinepay-v3').then(function (cache) {
      ['/dashboard', '/send', '/history'].forEach(function (page) { cache.delete(page); });
    });
 }

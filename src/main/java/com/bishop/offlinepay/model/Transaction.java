@@ -20,6 +20,9 @@ public class Transaction {
     private TransactionStatus status;
     private LocalDateTime timestamp;
 
+    @Column(unique = true, length = 64)
+    private String clientRef;
+
     public Transaction(){}
 
     public Transaction(Long senderId, Long receiverId, BigDecimal amount, BigDecimal fee, TransactionStatus status){
@@ -83,7 +86,17 @@ public class Transaction {
         return timestamp;
     }
 
+    public String getClientRef() {
+        return clientRef;
+    }
+
+    public void setClientRef(String clientRef) {
+        this.clientRef = clientRef;
+    }
+
     public void setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
     }
+
+
 }

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>History - OfflinePay</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#5B21B6">
+    <link rel="apple-touch-icon" href="/icons/icon-192.png">
+    <script th:src="@{/js/pwa.js}" defer></script>
+    <script th:src="@{/js/net.js}" defer></script>
+    <script th:src="@{/js/history.js}" defer></script>
+</head>
+<body>
+<main class="op-page">
+
+    <div class="op-card">
+        <strong>Transaction history</strong>
+        <p class="op-hint" th:text="${pendingCount} + ' transfer(s) waiting to be applied'"></p>
+        <button type="button" id="syncBtn" class="op-btn">Sync now</button>
+        <small id="syncNote" class="op-hint"></small>
+    </div>
+
+    <div class="op-card" th:if="${!items.isEmpty()}">
+        <ul class="op-queue">
+            <li th:each="item : ${items}">
+                <div>
+                    <strong th:text="${item.direction() == 'SENT' ? 'To ' + item.otherName() : 'From' + item.otherName()}">To John D.</strong><br>
+                    <small class="op-hint" th:text="${#temporals.format(item.timestamp(), 'dd MMM yyyy, HH:mm')}"></small>
+                </div>
+                <div style="text-align:right;">
+                    <span th:classappend="${item.direction() == 'SENT'} ? 'amount-out' : 'amount-in'"
+                          th:text="${(item.direction() == 'SENT' ? '-' : '+') + '₦' + #numbers.formatDecimal(item.amount(), 1, 'COMMA', 2, 'POINT')}"></span><br>
+                    <span class="pill" th:classappend="${'pill-' + #strings.toLowerCase(item.status())}"
+                          th:text="${item.status() == 'PENDING_SYNC' ? 'Pending sync' : #strings.capitalize(#strings.toLowerCase(item.status()))}"></span>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <p class="op-hint" th:if="${items.isEmpty()}">No transactions yet.</p>
+    
+</main>
+
+<nav class="bottom-nav">
+    <a th:href="@{/dashboard}">Home</a>
+    <a th:href="@{/send}">Send</a>
+    <a th:href="@{/history}" class="active">History</a>
+</nav>
+
+</body>
+</html>

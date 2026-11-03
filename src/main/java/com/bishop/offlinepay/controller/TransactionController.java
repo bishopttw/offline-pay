@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.math.BigDecimal;
 
 @RestController
 @RequestMapping("/transactions")
@@ -18,24 +17,6 @@ public class TransactionController {
     @Autowired
     public TransactionController(TransactionService transactionService) {
         this.transactionService = transactionService;
-    }
-
-    @PostMapping("/transfer")
-    public Transaction transferOnline(
-            @RequestParam Long receiverId,
-            @RequestParam BigDecimal amount,
-            HttpSession session) {
-        Long senderId = (Long) session.getAttribute("accountId");
-        return transactionService.transferOnline(senderId, receiverId, amount);
-    }
-
-    @PostMapping("/transfer-offline")
-    public Transaction transferOffline(
-            @RequestParam Long receiverId,
-            @RequestParam BigDecimal amount,
-            HttpSession session) {
-        Long senderId = (Long) session.getAttribute("accountId");
-        return transactionService.transferOffline(senderId, receiverId, amount);
     }
 
     @PostMapping("/sync")
