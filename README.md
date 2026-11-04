@@ -1,54 +1,135 @@
-# OfflinePay — An Offline-First Banking Transaction System
+# OfflinePay
 
-## Overview
-OfflinePay is a simulated banking platform built to solve a real-world problem: people without a stable mobile data connection are locked out of digital banking. This project demonstrates an **offline-first architecture**, where a user can still initiate transactions with no internet connection. These transactions are queued locally (with a higher fee applied) and automatically synced to the central ledger once connectivity returns.
+**By:** CHUKWUMA PRINCE (NIIT Semester 4, MMS4 project)
+**Live demo:** https://offline-pay.onrender.com
+**Repository:** https://github.com/bishopttw/offline-pay
+**LinkedIn:** https://www.linkedin.com/in/prince-chukwuma-728a91381/?lipi=urn%3Ali%3Apage%3Ad_flagship3_feed%3Baxc8xv12Qei%2BwRR35LxJgg%3D%3D*
 
-This project is built as part of the MMS4 Semester Project at NIIT, and is designed to directly apply the semester's focus areas — **Docker and Kubernetes** — to a real architectural problem rather than using them as an afterthought.
+OfflinePay is an offline-first wallet and banking simulation. It lets a user keep sending money when the internet is weak or gone, and makes sure every transfer is applied safely once the connection returns.
 
-> **Note:** This project simulates "offline" behavior for demonstration purposes. It does not integrate with real telecom infrastructure (e.g. SMS/USSD) — a toggle is used to simulate a loss of connectivity, and the app's local queuing/sync logic behaves exactly as it would in a real offline-first system.
+## The problem it solves
 
-## Problem Statement
-Millions of people in low-connectivity areas are unable to access digital financial services simply because they lack a stable internet connection. OfflinePay solves this by allowing transactions to be initiated offline, recorded locally, and reconciled with the central system once a connection is available — similar in principle to how mobile money agents operate in areas with unreliable network access.
+Mobile banking apps fail the moment the connection drops. OfflinePay is built around that case. The app opens with no internet, shows the last known balance, and still lets the user send money in two ways:
 
-## Core Features (MVP)
-1. **Send money online** — standard transfer between accounts at the normal transaction fee.
-2. **Send money offline** — a transaction can still be initiated with no internet connection; a higher fee is applied.
-3. **Auto-sync when back online** — offline transactions are queued locally and automatically pushed to the central system once connectivity returns.
-4. **Balance check before confirming** — before an offline transaction is finalized, the system re-validates that the sender still has sufficient funds.
-5. **Multi-instance simulation** — multiple containerized instances of the app (via Docker) simulate separate offline "agent" nodes, demonstrating the full offline → sync flow visually.
+1. **SMS/USSD channel (simulated):** the phone has no data, but the "offline" switch is on. The transfer goes through a simulated SMS channel, the receiver is credited immediately, and a higher fee applies (₦5).
+2. **Saved on the phone:** there is no connection at all. The transfer is saved on the device. When the connection returns, the user enters their PIN once and every waiting transfer is sent.
 
-## Tech Stack
-- **Backend:** Java, Spring Boot
-- **Frontend:** Thymeleaf (server-rendered HTML/CSS)
-- **Database:** H2
-- **Infrastructure:** Docker, Docker Compose (Kubernetes/Minikube for multi-node orchestration, time permitting)
+Normal online transfers cost ₦1.
 
-## How to Run
+## Features
 
-1. Clone the repository:
-   git clone <git clone https://github.com/bishopttw/offline-pay.git>
+- Sign up and log in with a unique 10-digit account number and a unique Nigerian phone number
+- Wallet balance with a hide/show eye
+- Add money through Paystack (test mode)
+- Send money by account number. The receiver's name is shown masked (for example "John D.") before sending
+- Transaction PIN (4 digits) required for every transfer
+- Transaction history with statuses: CONFIRMED, PENDING_SYNC, FAILED
+- Works offline as an installable app (PWA): add it to the phone's home screen
+- Live Online/Offline badge
+- Dark and light mode
+- Friendly 404 and 500 pages
+- Responsive design for phones and laptops
 
-2. Navigate into the project folder:
-   cd offlinepay
+## Security
 
-3. Run the application using Maven:
-   ./mvnw spring-boot:run
-   (On Windows, use: mvnw.cmd spring-boot:run)
+- Passwords and PINs stored hashed with BCrypt, never as plain text
+- Strong password rules and a weak-PIN check (rejects 1111, 1234 and similar)
+- Account lock for 5 minutes after 5 wrong attempts (passwords and PINs share one counter)
+- Generic login error message, so attackers can't tell which part was wrong
+- CSRF protection on all forms and requests (the webhook is the only exception, and it is signature-checked)
+- Session cookie is HttpOnly, SameSite and Secure on the live site
+- Session ID is changed at login (prevents session fixation) and sessions expire after 10 idle minutes
+- Duplicate-send protection: each transfer carries a unique reference, so a retry can't pay twice
+- Ownership checks on the server: the sender is always taken from the session, never from the request
+- Optimistic locking (`@Version`) on accounts to stop double spending
+- Paystack webhook verified with HMAC-SHA512, and payments are verified with Paystack before any money is credited, and credited only once
+- Error details hidden from users; H2 console off unless switched on
+- Secrets only in environment variables, never in the code or GitHub
 
-4. Once it starts, the app will be available at:
-   http://localhost:8080
+## Tech stack
 
-5. To access the H2 database console (for viewing stored data):
-   http://localhost:8080/h2-console
-   (Use the JDBC URL and credentials set in application.properties)
+Java 17, Spring Boot 4, Spring Security, Spring Data JPA (Hibernate), H2 database, Thymeleaf, vanilla JavaScript, Paystack (test mode), Docker, GitHub Actions, Render, Kubernetes manifests.
 
-## Project Status
-🚧 In active development —.
+## Run it locally
 
-## Author
-*Name -- Chukwuma Prince.*
-*Phone no -- 09172573966.*
-*Linked -- https://www.linkedin.com/in/prince-chukwuma-728a91381/?lipi=urn%3Ali%3Apage%3Ad_flagship3_feed%3Baxc8xv12Qei%2BwRR35LxJgg%3D%3D*
-*Github -- https://github.com/bishopttw*
+Requirements: JDK 17 or newer.
 
-## Status: MVP complete, Docker + K8s pipeline in progress'
+```bash
+git clone https://github.com/bishopttw/offline-pay.git
+cd offline-pay
+```
+
+Set your Paystack **test** secret key (never commit it), then start the app.
+
+Windows PowerShell:
+```powershell
+$env:PAYSTACK_SECRET_KEY="sk_test_xxxxxxxx"
+.\mvnw spring-boot:run
+```
+
+Mac/Linux:
+```bash
+export PAYSTACK_SECRET_KEY=sk_test_xxxxxxxx
+./mvnw spring-boot:run
+```
+
+Open http://localhost:8080.
+
+| Setting | Meaning |
+|---|---|
+| `PAYSTACK_SECRET_KEY` | Paystack test secret key |
+| `APP_BASE_URL` | Public address of the app (used for the Paystack return) |
+| `COOKIE_SECURE` | `true` on HTTPS sites |
+| `SEED_DEMO` | `true` creates the two demo accounts when the database is empty |
+| `H2_CONSOLE` | `true` turns on the H2 console (development only) |
+
+## Demo accounts
+
+Switch on `SEED_DEMO=true` to get these (demo data only):
+
+| Name | Email | Account no. | Password | PIN | Start balance |
+|---|---|---|---|---|---|
+| Ada Okoro | ada@demo.com | 2000000001 | Demo@12345 | 4829 | ₦50,000 |
+| Tunde Bello | tunde@demo.com | 2000000002 | Demo@12345 | 4829 | ₦20,000 |
+
+## Tests
+
+```bash
+./mvnw test
+```
+
+22 tests cover: signup and login rules, account lockout, online and offline transfers, sync (success and failure), duplicate-send protection, PIN checks, and the Paystack webhook signature. They use an in-memory database, so they never touch real data.
+
+## CI/CD
+
+GitHub Actions runs on every push to `main`:
+1. **test:** builds the project and runs all tests
+2. **deploy-and-test:** starts a Minikube cluster, creates a Kubernetes secret, applies the RBAC rules, deploys the secure pod and checks its logs. It only runs if the tests pass.
+
+The live site is deployed on Render.
+
+## Docker
+
+```bash
+docker compose up --build
+```
+This starts two instances (agents) of the app for the demo. Pass the Paystack key through the environment, never in the compose file.
+
+## Screenshots
+
+| Screen | Image |
+|---|---|
+| Backend root | ![backend](docs/screenshots/backend-root.png) |
+| Frontend root | ![frontend](docs/screenshots/frontend-root.png) |
+| GitHub Actions | ![actions](docs/screenshots/actions.png) |
+| Dashboard | ![dashboard](docs/screenshots/dashboard.png) |
+| Offline send | ![offline](docs/screenshots/offline-send.png) |
+
+## Known limitations (honest notes)
+
+- The SMS/USSD channel is a **simulation** inside the app. It does not connect to a real telecom network.
+- Payments use Paystack **test mode**, so no real money moves.
+- The database is H2. On Render's free plan it is wiped when the app restarts, which is why the demo accounts are seeded. A real deployment would use PostgreSQL.
+- Render's free plan sleeps when idle, so the first load can take up to a minute.
+- Sessions expire after 10 idle minutes by design. Waiting offline transfers stay on the phone and are not lost.
+- On iPhones, Paystack's return to an installed home-screen app can lose the login. Use Safari for Add Money.
