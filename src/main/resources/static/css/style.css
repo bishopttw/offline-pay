@@ -1,4 +1,32 @@
+/* ==========================================================
+   OFFLINEPAY STYLESHEET
+   1.  Variables (light + dark)
+   2.  Reset and base
+   3.  Auth pages (login / signup)
+   4.  Auth split layout (intro beside form)
+   5.  App layout and top bar
+   6.  Status badge (Online / Offline)
+   7.  Balance card
+   8.  Quick action buttons
+   9.  Transaction list
+   10. Badges and pills
+   11. Bottom navigation
+   12. Alerts and toast
+   13. Send page (op- components)
+   14. Modal
+   15. Account number line
+   16. Utilities
+   17. Theme toggle button
+   18. Dark mode overrides
+   19. Responsive (phones and laptops)
+   ========================================================== */
+
+
+/* ==========================================================
+   1. VARIABLES
+   ========================================================== */
 :root {
+    /* Main app colours */
     --primary: #5B21B6;
     --primary-dark: #4C1D95;
     --success: #16A34A;
@@ -9,12 +37,35 @@
     --text: #1F2937;
     --text-muted: #6B7280;
     --border: #E5E7EB;
+
+    /* Theme colours (switch in dark mode) */
+    --op-bg: #F8F9FC;
+    --op-card: #FFFFFF;
+    --op-text: #111827;
+    --op-muted: #6B7280;
+    --op-border: #E5E7EB;
+    --op-input: #FFFFFF;
 }
 
-* {
-     box-sizing: border-box;
-     margin: 0;
-     padding: 0;
+[data-theme="dark"] {
+    --op-bg: #0F1020;
+    --op-card: #1A1B2E;
+    --op-text: #F3F4F6;
+    --op-muted: #9CA3AF;
+    --op-border: #2D2F4A;
+    --op-input: #23253D;
+}
+
+
+/* ==========================================================
+   2. RESET AND BASE
+   ========================================================== */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
 body {
@@ -23,16 +74,30 @@ body {
     color: var(--text);
 }
 
-.auth-container {
-     display: flex;
-     justify-content: center;
-     align-items: center;
-     min-height: 100vh;
-     padding: 20px;
+img,
+svg {
+    max-width: 100%;
 }
 
-.auth-card{
-    background : var(--card-bg);
+input,
+select {
+    font-size: 16px;
+}
+
+
+/* ==========================================================
+   3. AUTH PAGES (LOGIN / SIGNUP)
+   ========================================================== */
+.auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.auth-card {
+    background: var(--card-bg);
     border-radius: 16px;
     padding: 40px 32px;
     width: 100%;
@@ -54,11 +119,34 @@ body {
     font-size: 14px;
 }
 
+.auth-switch {
+    text-align: center;
+    margin-top: 16px;
+    font-size: 14px;
+    color: var(--text-muted);
+}
+
+.auth-switch a {
+    color: var(--primary);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.error-message {
+    background-color: #FEF2F2;
+    color: var(--danger);
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    margin-bottom: 16px;
+}
+
+/* Form fields */
 .form-group {
     margin-bottom: 16px;
 }
 
-.form-group label{
+.form-group label {
     display: block;
     font-size: 13px;
     font-weight: 600;
@@ -72,7 +160,7 @@ body {
     padding: 12px 14px;
     border: 1px solid var(--border);
     border-radius: 10px;
-    font-size: 14px;
+    font-size: 16px;
 }
 
 .form-group input:focus,
@@ -81,54 +169,34 @@ body {
     border-color: var(--primary);
 }
 
+/* Main button */
 .btn-primary {
-   width: 100%;
-   background-color: var(--primary);
-   color: white;
-   border: none;
-   padding: 14px;
-   border-radius: 10px;
-   font-size: 15px;
-   font-weight: 600;
-   cursor: pointer;
-   margin-top: 8px;
+    width: 100%;
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 8px;
 }
 
 .btn-primary:hover {
     background-color: var(--primary-dark);
 }
 
-.auth-switch {
-    text-align: center;
-    margin-top: 16px;
-    font-size: 14px;
-    color: var(--text-muted);
-}
-
-.auth-switch a{
-   color: var(--primary);
-   font-weight:600;
-   text-decoration: none;
-}
-
-.error-message {
-  background-color: #FEF2F2;
-  color: var(--danger);
-  padding: 10px 14px;
-  border-radius: 8px;
-  font-size: 13px;
-  margin-bottom: 16px;
-}
-
-.password-wrapper{
+/* Password field with eye button */
+.password-wrapper {
     position: relative;
 }
 
-.password-wrapper input{
-     padding-right: 44px;
+.password-wrapper input {
+    padding-right: 44px;
 }
 
-.toggle-password{
+.toggle-password {
     position: absolute;
     right: 12px;
     top: 50%;
@@ -145,7 +213,7 @@ body {
     color: var(--primary);
 }
 
-.toggle-password .eye-closed{
+.toggle-password .eye-closed {
     display: none;
 }
 
@@ -157,10 +225,73 @@ body {
     display: inline;
 }
 
+
+/* ==========================================================
+   4. AUTH SPLIT LAYOUT (INTRO BESIDE FORM)
+   ========================================================== */
+.auth-layout {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr;
+}
+
+.auth-intro {
+    background: linear-gradient(160deg, #5B21B6, #3B0F85);
+    color: #fff;
+    padding: 28px 20px;
+}
+
+.auth-intro h1 {
+    font-size: 1.6rem;
+    margin: 0 0 6px;
+}
+
+.auth-intro p {
+    margin: 0;
+    opacity: .9;
+}
+
+.auth-points {
+    list-style: none;
+    padding: 0;
+    margin: 20px 0 0;
+    display: none;
+}
+
+.auth-points li {
+    padding: 12px 0;
+    border-top: 1px solid rgba(255, 255, 255, .2);
+}
+
+.auth-panel {
+    padding: 24px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--op-bg);
+    color: var(--op-text);
+}
+
+.auth-panel > * {
+    width: 100%;
+    max-width: 420px;
+}
+
+
+/* ==========================================================
+   5. APP LAYOUT AND TOP BAR
+   ========================================================== */
 .app-container {
     max-width: 480px;
     margin: 0 auto;
-    padding: 20px 20px 90px;
+    padding: 20px 20px 96px;
+}
+
+.op-page {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 16px;
+    padding-bottom: 96px;
 }
 
 .top-bar {
@@ -171,17 +302,21 @@ body {
 }
 
 .greeting {
-   color: var(--text-muted);
-   font-size: 13px;
+    color: var(--text-muted);
+    font-size: 13px;
 }
 
 .logout-link {
-   color: var(--primary);
-   font-size:13px;
-   font-weight: 600;
-   text-decoration: none;
+    color: var(--primary);
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
 }
 
+
+/* ==========================================================
+   6. STATUS BADGE (ONLINE / OFFLINE)
+   ========================================================== */
 .status-badge {
     display: inline-flex;
     align-items: center;
@@ -209,7 +344,7 @@ body {
 }
 
 .status-badge.offline {
-    background: #FFEDD5;
+    background: #FEE2E2;
     color: var(--warning);
 }
 
@@ -217,6 +352,10 @@ body {
     background: var(--warning);
 }
 
+
+/* ==========================================================
+   7. BALANCE CARD
+   ========================================================== */
 .balance-card {
     background: linear-gradient(135deg, var(--primary), var(--primary-dark));
     color: white;
@@ -241,6 +380,44 @@ body {
     opacity: 0.8;
 }
 
+.balance-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Eye button that shows or hides the balance */
+.eye-btn {
+    background: none;
+    border: none;
+    color: white;
+    opacity: 0.85;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 0;
+}
+
+.eye-btn:hover {
+    opacity: 1;
+}
+
+.eye-btn .eye-open {
+    display: none;
+}
+
+.eye-btn.revealed .eye-open {
+    display: block;
+}
+
+.eye-btn.revealed .eye-closed {
+    display: none;
+}
+
+
+/* ==========================================================
+   8. QUICK ACTION BUTTONS
+   ========================================================== */
 .actions {
     display: flex;
     gap: 12px;
@@ -269,12 +446,16 @@ body {
     color: var(--primary);
 }
 
+
+/* ==========================================================
+   9. TRANSACTION LIST
+   ========================================================== */
 .section-header h3 {
     font-size: 15px;
     margin-bottom: 12px;
 }
 
-.tx-list{
+.tx-list {
     background: var(--card-bg);
     border-radius: 14px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
@@ -292,7 +473,7 @@ body {
     border-bottom: none;
 }
 
-.tx-title{
+.tx-title {
     font-size: 14px;
     font-weight: 600;
 }
@@ -300,7 +481,7 @@ body {
 .tx-date {
     font-size: 12px;
     color: var(--text-muted);
-    margin-top:2px;
+    margin-top: 2px;
 }
 
 .tx-right {
@@ -313,12 +494,35 @@ body {
     margin-bottom: 4px;
 }
 
+.amount-in {
+    color: #166534;
+    font-weight: 600;
+}
+
+.amount-out {
+    color: #991B1B;
+    font-weight: 600;
+}
+
+.empty-state {
+    background: var(--card-bg);
+    border-radius: 14px;
+    padding: 24px;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 14px;
+}
+
+
+/* ==========================================================
+   10. BADGES AND PILLS (TRANSACTION STATUS)
+   ========================================================== */
 .badge {
-   display: inline-block;
-   font-size: 10px;
-   font-weight: 700;
-   padding: 3px 8px;
-   border-radius: 999px;
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 999px;
 }
 
 .badge-CONFIRMED {
@@ -336,15 +540,32 @@ body {
     color: var(--danger);
 }
 
-.empty-state {
-    background: var(--card-bg);
-    border-radius: 14px;
-    padding: 24px;
-    text-align: center;
-    color: var(--text-muted);
-    font-size: 14px;
+.pill {
+    padding: 2px 10px;
+    border-radius: 999px;
+    font-size: .75rem;
+    font-weight: 600;
 }
 
+.pill-confirmed {
+    background: #DCFCE7;
+    color: #166534;
+}
+
+.pill-pending_sync {
+    background: #FEF3C7;
+    color: #92400E;
+}
+
+.pill-failed {
+    background: #FEE2E2;
+    color: #991B1B;
+}
+
+
+/* ==========================================================
+   11. BOTTOM NAVIGATION
+   ========================================================== */
 .bottom-nav {
     position: fixed;
     bottom: 0;
@@ -354,6 +575,7 @@ body {
     display: flex;
     justify-content: space-around;
     padding: 14px 0;
+    padding-bottom: calc(14px + env(safe-area-inset-bottom));
     border-top: 1px solid var(--border);
 }
 
@@ -368,408 +590,315 @@ body {
     color: var(--primary);
 }
 
-.balance-top {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
 
-.eye-btn {
-    background: none;
-    border: none;
-    color: white;
-    opacity: 0.85;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    padding: 0;
-}
-
-.eye-btn:hover {
-    opacity: 1;
-}
-
-.eye-btn .eye-open {
-    display: none;
-}
-
-.eye-btn.revealed .eye-open {
-     display: block;
-}
-
-.eye-btn.revealed .eye-closed {
-     display: none;
-}
-
+/* ==========================================================
+   12. ALERTS AND TOAST
+   ========================================================== */
 .alert {
-     padding:12px 16px;
-     border-radius: 10px;
-     margin: 12px 0;
-     font-size: 0.95rem;
+    padding: 12px 16px;
+    border-radius: 10px;
+    margin: 12px 0;
+    font-size: 0.95rem;
 }
 
 .alert-success {
-     background: #DCFCE7;
-     color: #166534;
+    background: #DCFCE7;
+    color: #166534;
 }
 
 .alert-error {
-     background: #FEE2E2;
-     color: #991B1B;
-}
-
-[hidden] {
-   display: none !important;
-}
-.op-page {
-   max-width: 480px;
-   margin: 0 auto;
-   padding: 16px;
-   padding-bottom: 90px;
-}
-
-.op-card {
-   background: #fff;
-   border-radius: 16px;
-   padding: 16px;
-   margin: 12px 0;
-   box-shadow: 0 1px 4px rgba(0,0,0,.08);
-}
-
-.op-tabs {
-   display: flex;
-   gap: 8px;
-}
-
-.op-tab {
-   flex: 1;
-   padding: 10px;
-   border-radius: 10px;
-   border: 1px solid #ddd;
-   background: #fff;
-   cursor: pointer;
-}
-
-.op-tab.active {
-   background: #5B21B6;
-   color: #fff;
-   border-color: #5B21B6;
-}
-
-.op-field {
-   display: flex;
-   flex-direction: column;
-   gap: 6px;
-   margin: 12px 0;
-}
-
-.op-field input {
-   padding: 12px;
-   border: 1px solid #ccc;
-   border-radius: 10px;
-   font-size: 1rem;
-}
-
-.op-btn {
-   width: 100%;
-   padding: 14px;
-   border: 0;
-   border-radius: 12px;
-   background: #5B21B6;
-   color: #fff;
-   font-size: 1rem;
-   cursor: pointer;
-}
-
-.op-btn:disabled {
-   opacity: .5;
-   cursor: not-allowed;
-}
-
-.op-hint {
-   font-size: .85rem;
-   color: #666;
-   min-height: 1.2em;
-}
-
-.op-switch {
-   display: flex;
-   align-items: center;
-   gap: 8px;
-   font-size: .9rem;
-   margin-top: 8px;
-}
-
-.op-queue {
-   list-style: none;
-   padding: 0;
-   margin: 0;
-}
-
-.op-queue li {
-   display: flex;
-   justify-content: space-between;
-   align-items: center;
-   gap: 8px;
-   padding: 10px 0;
-   border-bottom: 1px solid #eee;
-}
-
-.op-link-btn {
-   background: none;
-   border: 0;
-   color: #B91C1C;
-   cursor: pointer;
-}
-
-.modal {
-   position: fixed;
-   inset: 0;
-   background: rgba(0,0,0,.5);
-   display: flex;
-   align-items: center;
-   justify-content: center;
-   padding: 16px;
-}
-
-.modal-box {
-   background: #fff;
-   border-radius: 16px;
-   padding: 20px;
-   max-width: 360px;
+    background: #FEE2E2;
+    color: #991B1B;
 }
 
 .alert-info {
-   background: #E0E7FF;
-   color: #3730A3;
-}
-
-.pill {
-   padding: 2px 10px;
-   border-radius: 999px;
-   font-size: .75rem;
-   font-weight: 600;
-}
-
-.pill-confirmed {
-   background: #DCFCE7;
-   color: #166534;
-}
-
-.pill-pending_sync {
-   background: #FEF3C7;
-   color: #92400E;
-}
-
-.pill-failed {
-   background: #FEE2E2;
-   color: #991B1B;
-}
-
-.amount-in {
-   color: #166534;
-   font-weight: 600;
-}
-
-.amount-out {
-   color: #991B1B;
-   font-weight: 600;
+    background: #E0E7FF;
+    color: #3730A3;
 }
 
 .op-toast {
-  position: fixed;
-  top: 12px;
-  left: 12px;
-  right: 12px;
-  max-width: 456px;
-  margin: 0 auto;
-  z-index: 2000;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, .2);
+    position: fixed;
+    top: 12px;
+    left: 12px;
+    right: 12px;
+    max-width: 456px;
+    margin: 0 auto;
+    z-index: 2000;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, .2);
+}
+
+
+/* ==========================================================
+   13. SEND PAGE (OP- COMPONENTS)
+   ========================================================== */
+.op-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 16px;
+    margin: 12px 0;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, .08);
+}
+
+.op-tabs {
+    display: flex;
+    gap: 8px;
+}
+
+.op-tab {
+    flex: 1;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    background: #fff;
+    cursor: pointer;
+}
+
+.op-tab.active {
+    background: #5B21B6;
+    color: #fff;
+    border-color: #5B21B6;
+}
+
+.op-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin: 12px 0;
+}
+
+.op-field input {
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    font-size: 1rem;
 }
 
 .op-field .password-wrapper {
-  position: relative; width: 100%;
+    position: relative;
+    width: 100%;
 }
+
 .op-field .password-wrapper input {
-  width: 100%; box-sizing: border-box; padding-right: 48px;
+    width: 100%;
+    box-sizing: border-box;
+    padding-right: 48px;
 }
 
+.op-btn {
+    width: 100%;
+    padding: 14px;
+    border: 0;
+    border-radius: 12px;
+    background: #5B21B6;
+    color: #fff;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.op-btn:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+}
+
+.op-hint {
+    font-size: .85rem;
+    color: #666;
+    min-height: 1.2em;
+}
+
+.op-switch {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: .9rem;
+    margin-top: 8px;
+}
+
+.op-queue {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.op-queue li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.op-link-btn {
+    background: none;
+    border: 0;
+    color: #B91C1C;
+    cursor: pointer;
+}
+
+
+/* ==========================================================
+   14. MODAL
+   ========================================================== */
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, .5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+}
+
+.modal-box {
+    background: #fff;
+    border-radius: 16px;
+    padding: 20px;
+    max-width: 360px;
+}
+
+
+/* ==========================================================
+   15. ACCOUNT NUMBER LINE
+   ========================================================== */
 .account-line {
-  margin-top: 8px;
-  font-size: .9rem;
-  color: rgba(255,255,255,.85);
-  display: flex;
-  align-items: center;
-  gap: 8px;
+    margin-top: 8px;
+    font-size: .9rem;
+    color: rgba(255, 255, 255, .85);
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
+
 .copy-btn {
-  background: rgba(255,255,255,.2);
-  color: #fff;
-  border: 0;
-  border-radius: 8px;
-  padding: 4px 10px;
-  cursor: pointer;
+    background: rgba(255, 255, 255, .2);
+    color: #fff;
+    border: 0;
+    border-radius: 8px;
+    padding: 4px 10px;
+    cursor: pointer;
 }
 
-:root {
-  --op-bg: #F8F9FC;
-  --op-card: #FFFFFF;
-  --op-text: #111827;
-  --op-muted: #6B7280;
-  --op-border: #E5E7EB;
-  --op-input: #FFFFFF;
-}
-[data-theme="dark"] {
-  --op-bg: #0F1020;
-  --op-card: #1A1B2E;
-  --op-text: #F3F4F6;
-  --op-muted: #9CA3AF;
-  --op-border: #2D2F4A;
-  --op-input: #23253D;
+
+/* ==========================================================
+   16. UTILITIES
+   ========================================================== */
+[hidden] {
+    display: none !important;
 }
 
+
+/* ==========================================================
+   17. THEME TOGGLE BUTTON
+   ========================================================== */
 #themeToggle {
-  position: fixed;
-  right: 12px;
-  bottom: 76px;
-  z-index: 1000;
-  padding: 8px 14px;
-  border-radius: 999px;
-  cursor: pointer;
-  font-size: .85rem;
-  border: 1px solid var(--op-border);
-  background: var(--op-card);
-  color: var(--op-text);
-  box-shadow: 0 2px 8px rgba(0,0,0,.15);
+    position: fixed;
+    right: 12px;
+    bottom: 76px;
+    z-index: 1000;
+    padding: 8px 14px;
+    border-radius: 999px;
+    cursor: pointer;
+    font-size: .85rem;
+    border: 1px solid var(--op-border);
+    background: var(--op-card);
+    color: var(--op-text);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, .15);
 }
 
+
+/* ==========================================================
+   18. DARK MODE OVERRIDES
+   (kept near the end so they win over the light styles)
+   ========================================================== */
 [data-theme="dark"] body {
-  background: var(--op-bg);
-  color: var(--op-text);
+    background: var(--op-bg);
+    color: var(--op-text);
 }
+
 [data-theme="dark"] .op-card,
 [data-theme="dark"] .modal-box,
 [data-theme="dark"] .tx-list,
 [data-theme="dark"] .action-btn,
 [data-theme="dark"] .bottom-nav {
-  background: var(--op-card);
-  color: var(--op-text);
-  border-color: var(--op-border);
+    background: var(--op-card);
+    color: var(--op-text);
+    border-color: var(--op-border);
 }
+
 [data-theme="dark"] .tx-row {
-  border-color: var(--op-border);
+    border-color: var(--op-border);
 }
+
 [data-theme="dark"] .top-bar h2,
 [data-theme="dark"] .section-header h3,
 [data-theme="dark"] .tx-title,
 [data-theme="dark"] .tx-amount,
 [data-theme="dark"] .op-field label {
-  color: var(--op-text);
+    color: var(--op-text);
 }
+
 [data-theme="dark"] .greeting,
 [data-theme="dark"] .tx-date,
 [data-theme="dark"] .empty-state,
 [data-theme="dark"] .op-hint,
 [data-theme="dark"] .bottom-nav a {
-  color: var(--op-muted);
+    color: var(--op-muted);
 }
+
 [data-theme="dark"] .bottom-nav a.active {
-  color: #A78BFA;
+    color: #A78BFA;
 }
+
 [data-theme="dark"] input,
 [data-theme="dark"] select {
-  background: var(--op-input);
-  color: var(--op-text);
-  border-color: var(--op-border);
+    background: var(--op-input);
+    color: var(--op-text);
+    border-color: var(--op-border);
 }
+
 [data-theme="dark"] .op-tab {
-  background: var(--op-card);
-  color: var(--op-text);
-  border-color: var(--op-border);
+    background: var(--op-card);
+    color: var(--op-text);
+    border-color: var(--op-border);
 }
+
 [data-theme="dark"] .op-tab.active {
-  background: #5B21B6;
-  color: #fff;
-  border-color: #5B21B6;
+    background: #5B21B6;
+    color: #fff;
+    border-color: #5B21B6;
 }
 
-.auth-layout {
-  min-height: 100vh;
-  display: grid;
-  grid-template-columns: 1fr;
-}
-.auth-intro {
-  background: linear-gradient(160deg, #5B21B6, #3B0F85);
-  color: #fff;
-  padding: 28px 20px;
-}
-.auth-intro h1 {
-  font-size: 1.6rem;
-  margin: 0 0 6px;
-}
-.auth-intro p {
-  margin: 0;
-  opacity: .9;
-}
-.auth-points {
-  list-style: none;
-  padding: 0;
-  margin: 20px 0 0;
-  display: none;
-}
-.auth-points li {
-  padding: 12px 0;
-  border-top: 1px solid rgba(255,255,255,.2);
-}
-.auth-panel {
-  padding: 24px 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--op-bg);
-  color: var(--op-text);
-}
-.auth-panel > * {
-  width: 100%;
-  max-width: 420px;
-}
 
-@media (min-width: 900px) {
-  .auth-layout {
-    grid-template-columns: 1fr 1fr;
-  }
-  .auth-intro {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 64px;
-  }
-  .auth-points {
-    display: block;
-  }
-}
+/* ==========================================================
+   19. RESPONSIVE
+   ========================================================== */
 
-*, *::before, *::after {
-  box-sizing: border-box;
-}
-img, svg {
-  max-width: 100%;
-}
-input, select {
-  font-size: 16px;
-}
-.bottom-nav {
-  padding-bottom: env(safe-area-inset-bottom);
-}
-.op-page, .app-container {
-  padding-bottom: 96px;
-}
+/* Small phones */
 @media (max-width: 380px) {
-  .balance-amount {
-    font-size: 1.8rem;
-  }
-  .actions {
-    gap: 8px;
-  }
+    .balance-amount {
+        font-size: 1.8rem;
+    }
+
+    .actions {
+        gap: 8px;
+    }
 }
 
+/* Laptops and large screens */
+@media (min-width: 900px) {
+    .auth-layout {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .auth-intro {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 64px;
+    }
+
+    .auth-points {
+        display: block;
+    }
+}
